@@ -4,13 +4,13 @@ import { useTranslation } from '../../i18n';
 import { Footer } from '../components/Footer';
 import { Header } from '../components/Header';
 
-export async function generateMetadata({ params: { lng } }) {
-  const { t } = await useTranslation(lng, 'second-page');
-
-  return { title: t('h1') };
-}
-
-export default async function Page({ params: { lng } }) {
+export default async function Page({
+  params: { lng },
+}: {
+  params: {
+    lng: string;
+  };
+}) {
   const { t } = await useTranslation(lng, 'second-page');
 
   return (

@@ -6,7 +6,13 @@ import { useTranslation } from '../../i18n/client';
 import { Footer } from '../components/Footer/client';
 import { Header } from '../components/Header';
 
-export default function Page({ params: { lng } }) {
+export default function Page({
+  params: { lng },
+}: {
+  params: {
+    lng: string;
+  };
+}) {
   const { t } = useTranslation(lng, 'second-client-page');
 
   return (

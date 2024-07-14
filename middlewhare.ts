@@ -1,5 +1,5 @@
 import acceptLanguage from 'accept-language';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 import { cookieName, fallbackLng, languages } from 'src/app/i18n/settings';
 
@@ -10,13 +10,15 @@ export const config = {
   matcher: ['/((?!api|_next/static|_next/image|assets|favicon.ico|sw.js|site.webmanifest).*)'],
 };
 
-export function middleware(req) {
+export function middleware(req: NextRequest) {
+  console.log('req', req);
+
   if (req.nextUrl.pathname.indexOf('icon') > -1 || req.nextUrl.pathname.indexOf('chrome') > -1)
     return NextResponse.next();
 
-  let lng;
+  let lng: string | undefined | null;
 
-  if (req.cookies.has(cookieName)) lng = acceptLanguage.get(req.cookies.get(cookieName).value);
+  if (req.cookies.has(cookieName)) lng = acceptLanguage.get(req.cookies.get(cookieName)?.value);
 
   if (!lng) lng = acceptLanguage.get(req.headers.get('Accept-Language'));
 
@@ -31,7 +33,7 @@ export function middleware(req) {
   }
 
   if (req.headers.has('referer')) {
-    const refererUrl = new URL(req.headers.get('referer'));
+    const refererUrl = new URL(req.headers.get('referer') || '');
     const lngInReferer = languages.find(l => refererUrl.pathname.startsWith(`/${l}`));
     const response = NextResponse.next();
 

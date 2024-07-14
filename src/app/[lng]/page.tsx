@@ -6,13 +6,13 @@ import { fallbackLng, languages } from '../i18n/settings';
 import { Footer } from './components/Footer';
 import { Header } from './components/Header';
 
-export async function generateMetadata({ params: { lng } }) {
-  const { t } = await useTranslation(lng);
-
-  return { title: t('h1') };
-}
-
-export default async function Page({ params: { lng } }) {
+export default async function Page({
+  params: { lng },
+}: {
+  params: {
+    lng: string;
+  };
+}) {
   if (languages.indexOf(lng) < 0) lng = fallbackLng;
 
   const { t } = await useTranslation(lng);
@@ -33,7 +33,11 @@ export default async function Page({ params: { lng } }) {
             </Trans>
           </p>
           <a href={t('blog.link')}>
-            <img style={{ width: '50%' }} src='https://locize.com/blog/next-app-dir-i18n/next-app-dir-i18n.jpg' />
+            <img
+              style={{ width: '50%' }}
+              alt='next 13 blog post'
+              src='https://locize.com/blog/next-app-dir-i18n/next-app-dir-i18n.jpg'
+            />
           </a>
         </div>
         <hr style={{ marginTop: 20, width: '90%' }} />
