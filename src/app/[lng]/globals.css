@@ -89,7 +89,6 @@ button:focus {
 main {
   display: flex;
   flex-direction: column;
-  flex: 1;
   justify-content: center;
   align-items: center;
 }

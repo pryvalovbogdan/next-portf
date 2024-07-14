@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslation } from 'src/app/i18n/client';
+
 import { FooterBase } from './FooterBase';
 
 // import { useParams } from 'next/navigation'
