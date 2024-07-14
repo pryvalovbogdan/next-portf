@@ -3,7 +3,7 @@ import { degToRad } from 'three/src/math/MathUtils.js';
 
 import { Environment, Float, MeshReflectorMaterial, RenderTexture, Text, useFont } from '@react-three/drei';
 
-const bloomColor = new Color('#000');
+const bloomColor = new Color('#fff');
 
 bloomColor.multiplyScalar(1.5);
 
@@ -34,7 +34,7 @@ export const Experience = () => {
         </meshBasicMaterial>
       </Text>
 
-      <mesh position-y={-0.48} rotation-x={-Math.PI / 2}>
+      <mesh position-y={-0.48} rotation-x={-Math.PI / 4}>
         <planeGeometry args={[100, 100]} />
         <MeshReflectorMaterial
           blur={[100, 100]}
