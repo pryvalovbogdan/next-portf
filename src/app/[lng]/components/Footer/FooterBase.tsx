@@ -23,26 +23,6 @@ export const FooterBase = ({ i18n, lng, path = '' }: { i18n: i18n; lng: string; 
             </span>
           );
         })}
-      <p>{t('description')}</p>
-      <p
-        style={{
-          fontSize: 'smaller',
-          fontStyle: 'italic',
-          marginTop: 20,
-        }}
-      >
-        <Trans i18nKey='helpLocize' t={t}>
-          With using
-          <a href='https://locize.com' target='_new'>
-            locize
-          </a>
-          you directly support the future of
-          <a href='https://www.i18next.com' target='_new'>
-            i18next
-          </a>
-          .
-        </Trans>
-      </p>
     </footer>
   );
 };

@@ -1,4 +1,5 @@
 import { useTranslation } from 'src/app/i18n';
+
 import { FooterBase } from './FooterBase';
 
 export const Footer = async ({ lng, path }: { lng: string; path?: string }) => {

@@ -22,7 +22,9 @@ export async function generateMetadata({
 
   return {
     title: t('title'),
-    content: 'A playground to explore new Next.js ng states, streaming, and component level data fetching.',
+    description: t('title'),
+    keywords: ['Design', '3d', 'JavaScript'],
+    creator: 'Alex Rudenok',
   };
 }
 
@@ -36,8 +38,8 @@ export default function RootLayout({
   };
 }) {
   return (
-    <html lang={lng} dir={dir(lng)}>
-      <head />
+    <html lang={lng} dir={dir(lng)} suppressHydrationWarning>
+      {/*<head />*/}
       <body>{children}</body>
     </html>
   );
