@@ -1,11 +1,4 @@
 {
-  "h1": "A simple example1",
-  "titleHome": "Home1",
-  "to-client-page": "To client page1",
-  "to-second-page": "To second page1",
-  "welcome": "Welcome to Next.js 13/14 <1>with the new app directory features</1> and i18next1",
-  "blog": {
-    "text": "Check out the corresponding <1>blog post</1> describing this example.1",
-    "link": "https://locize.com/blog/next-app-dir-i18n/"
-  }
+  "titleLayout": "Alex Rudenko Production",
+  "descriptionLayout": "Best 3d/2d designer alive."
 }

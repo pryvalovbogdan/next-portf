@@ -21,10 +21,13 @@ export async function generateMetadata({
   const { t } = await useTranslation(lng);
 
   return {
-    title: t('title'),
-    description: t('title'),
+    title: t('titleLayout'),
+    description: t('descriptionLayout'),
     keywords: ['Design', '3d', 'JavaScript'],
-    creator: 'Alex Rudenok',
+    creator: 'Alex Rudenko',
+    icons: {
+      icon: '/images/AlexRudenko.jpg',
+    },
   };
 }
 
@@ -39,7 +42,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang={lng} dir={dir(lng)} suppressHydrationWarning>
-      {/*<head />*/}
       <body>{children}</body>
     </html>
   );
