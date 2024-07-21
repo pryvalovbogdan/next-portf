@@ -1,8 +1,9 @@
 import { dir } from 'i18next';
 
+import '../../styles.css';
 import { useTranslation } from '../i18n';
 import { fallbackLng, languages } from '../i18n/settings';
-import './globals.css';
+import '../styles/index.css';
 
 export async function generateStaticParams() {
   return languages.map(lng => ({ lng }));
@@ -21,10 +22,13 @@ export async function generateMetadata({
   const { t } = await useTranslation(lng);
 
   return {
-    title: t('title'),
-    description: t('title'),
+    title: t('titleLayout'),
+    description: t('descriptionLayout'),
     keywords: ['Design', '3d', 'JavaScript'],
-    creator: 'Alex Rudenok',
+    creator: 'Alex Rudenko',
+    icons: {
+      icon: '/images/AlexRudenko.jpg',
+    },
   };
 }
 
@@ -39,7 +43,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang={lng} dir={dir(lng)} suppressHydrationWarning>
-      {/*<head />*/}
       <body>{children}</body>
     </html>
   );
