@@ -1,9 +1,13 @@
-import Link from 'next/link';
+import { Advent_Pro } from 'next/font/google';
 
-import { useTranslation } from '../i18n';
+import { NavBar } from 'src/app/[lng]/components/Navbar/NavBar';
+
 import { fallbackLng, languages } from '../i18n/settings';
-import { Footer } from './components/Footer';
+import { Footer } from './components/Footer/client';
 import { ModelWrapper } from './components/Model/CanvasWrapper';
+
+// If loading a variable font, you don't need to specify the font weight
+const font = Advent_Pro({ subsets: ['latin'], variable: '--font-advent-pro' });
 
 export default async function Page({
   params: { lng },
@@ -14,22 +18,17 @@ export default async function Page({
 }) {
   if (languages.indexOf(lng) < 0) lng = fallbackLng;
 
-  const { t } = await useTranslation(lng);
-
   return (
-    <div>
-      <main>
-        <ModelWrapper />
-        <div>
-          <Link href={`/${lng}/second-page`}>
-            <button type='button'>{t('to-second-page')}</button>
-          </Link>
-          <Link href={`/${lng}/client-page`}>
-            <button type='button'>{t('to-client-page')}</button>
-          </Link>
+    <div className={font.className}>
+      <div className='snap-y snap-mandatory overflow-y-auto h-screen flex-grow z-0 overflow-x-hidden'>
+        <main className='snap-always snap-center'>
+          <ModelWrapper />
+        </main>
+        <NavBar lng={lng} />
+        <div className='snap-always snap-center'>
+          <Footer lng={lng} path={''} />
         </div>
-      </main>
-      <Footer lng={lng} />
+      </div>
     </div>
   );
 }

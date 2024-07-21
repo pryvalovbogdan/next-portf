@@ -17,8 +17,10 @@ interface Resources {
   translation: {
     titleLayout: 'A simple example';
     descriptionLayout: 'Home';
-    'to-client-page': 'To client page';
-    'to-second-page': 'To second page';
+    name: 'Alex Rudenko';
+    home: 'Home';
+    portfolio: 'Portfolio';
+    about: 'About';
   };
 }
 

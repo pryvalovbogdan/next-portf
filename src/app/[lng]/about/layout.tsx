@@ -15,20 +15,32 @@ export async function generateMetadata({
   if (languages.indexOf(lng) < 0) lng = fallbackLng;
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { t } = await useTranslation(lng, 'second-client-page');
+  const { t } = await useTranslation(lng);
 
   return {
-    title: t('title'),
+    title: t('titleLayout'),
+    description: t('descriptionLayout'),
+    keywords: ['Design', '3d', 'JavaScript'],
+    creator: 'Alex Rudenko',
+    icons: {
+      icon: '/images/AlexRudenko.jpg',
+    },
   };
 }
 
-export default function Layout({
+export default function RootLayout({
   children,
+  params: { lng },
 }: {
   children: React.ReactNode;
   params: {
     lng: string;
   };
 }) {
-  return children;
+  return (
+    <div>
+      <p>about</p>
+      {children}
+    </div>
+  );
 }

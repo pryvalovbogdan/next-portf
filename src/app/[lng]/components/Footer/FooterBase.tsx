@@ -9,7 +9,7 @@ export const FooterBase = ({ i18n, lng, path = '' }: { i18n: i18n; lng: string; 
 
   return (
     <footer>
-      <Trans i18nKey='languageSwitcher' t={t}>
+      <Trans i18nKey='languageSwitcher' t={t} className='ext-3xl font-bold underline'>
         {/* @ts-expect-error Trans interpolation */}
         Switch from <strong>{{ lng }}</strong> to:{' '}
       </Trans>
