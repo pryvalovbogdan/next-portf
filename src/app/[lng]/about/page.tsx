@@ -1,5 +1,6 @@
 import Link from 'next/link';
 
+import PdfEditor from 'src/app/[lng]/about/pdfEditor';
 import Button from 'src/app/[lng]/components/Button/Button';
 
 import { useTranslation } from '../../i18n';
@@ -18,6 +19,7 @@ export default async function Page({
 
   return (
     <div>
+      <PdfEditor />
       <Link href={`/${lng}`}>
         <Button colorBg='red'>{'main'}</Button>
       </Link>
