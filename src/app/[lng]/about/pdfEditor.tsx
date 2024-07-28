@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 const PdfEditor = () => {
-  const [pdfFile, setPdfFile] = useState(null);
+  const [pdfFile, setPdfFile] = useState<any>(null);
   const canvasRef = useRef(null);
   const [text, setText] = useState('');
 
@@ -13,16 +13,75 @@ const PdfEditor = () => {
 
     reader.onload = e => {
       const pdfArrayBuffer = e.target.result;
-      const textContents = extractTextFromPDF(pdfArrayBuffer);
 
-      console.log('Extracted Text:', textContents);
+      const dec = new TextDecoder().decode(new Uint8Array(e.target.result));
+
+      setPdfFile(pdfArrayBuffer);
+      setText(extractTextFromPDF(pdfArrayBuffer));
     };
 
     reader.readAsArrayBuffer(file);
   };
 
+  async function binaryStringToByteArray(base64) {
+    const binaryString = atob(base64);
+    const len = binaryString.length;
+    const bytes = new Uint8Array(len);
+
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+
+    return bytes;
+  }
+
+  async function inflateByteArray(byteArray) {
+    // Create a blob from the byte array
+    const blob = new Blob([byteArray]);
+
+    // Create a stream from the blob
+    const readableStream = blob.stream();
+
+    // Create a decompression stream
+    const decompressionStream = new DecompressionStream('deflate-raw');
+
+    // Pipe the readable stream through the decompression stream
+    const decompressedStream = readableStream.pipeThrough(decompressionStream);
+
+    // Create a new Response object to get the decompressed content
+    const response = new Response(decompressedStream);
+
+    let decompressedText = '';
+
+    try {
+      // Extract the text content
+      decompressedText = await response.text();
+    } catch (e) {
+      console.log('error', e);
+    }
+
+    return decompressedText;
+  }
+
   // Function to clean up the extracted PDF text
   const cleanPDFText = pdfText => {
+    // Decode streams
+    const streams = pdfText.match(/(stream[\s\S]*?endstream)/g);
+
+    if (streams) {
+      streams.forEach(async stream => {
+        const byteArray = await binaryStringToByteArray(stream);
+        const decompressedText = await inflateByteArray(byteArray);
+
+        console.log('decompressedText', decompressedText, byteArray);
+
+        return decompressedText;
+      });
+    }
+
+    console.log('pdfText', pdfText, pdfText.match(/(Title \([\s\S]*?\/)/g));
+    const titlePdf = pdfText.match(/(Title \([\s\S]*?\/)/g);
+
     // Remove PDF-specific tags and metadata
     // Example patterns (basic cleanup)
     pdfText = pdfText.replace(/%PDF-\d\.\d/g, ''); // Remove PDF version
@@ -50,7 +109,7 @@ const PdfEditor = () => {
     for (let i = 0; i < uint8Array.length; i++) {
       const charCode = uint8Array[i];
 
-      // Simple ASCII character range check
+      // Simple ASCII character range check https://www.ascii-code.com/characters/A-Z
       if (charCode >= 32 && charCode <= 126) {
         pdfText += String.fromCharCode(charCode);
       } else if (charCode === 10 || charCode === 13) {
@@ -63,18 +122,6 @@ const PdfEditor = () => {
     return text;
   };
 
-  const parsePDF = pdfData => {
-    const textContents = extractTextFromPDF(pdfData);
-
-    return textContents;
-  };
-
-  useEffect(() => {
-    if (pdfFile) {
-      parsePDF(pdfFile);
-    }
-  }, [pdfFile]);
-
   const handleDownload = () => {
     const printWindow = window.open('', '', 'width=800,height=600');
 
@@ -83,6 +130,9 @@ const PdfEditor = () => {
     printWindow.document.write(`
       <html>
         <body>
+          <head>
+              <title>${text}</title>
+          </head>
           <pre>${text}</pre>
           <script>
             window.onload = function() {
