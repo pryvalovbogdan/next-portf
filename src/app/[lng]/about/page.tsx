@@ -6,7 +6,7 @@ import { useTranslation } from 'src/app/i18n';
 import { fallbackLng, languages } from 'src/app/i18n/settings';
 import 'src/app/styles/style.css';
 
-const PagePDFViewer = dynamic(() => import('../../components/PDFEditor/pdfEditorPdfjs'), {
+const PagePDFViewer = dynamic(() => import('src/app/components/PDFEditor'), {
   ssr: false,
 });
 
