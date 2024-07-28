@@ -24,11 +24,16 @@ const PdfEditor = () => {
     const file = files?.[0];
 
     if (file) {
+      // Convert uploaded file to an ArrayBuffer
       const arrayBuffer = await file.arrayBuffer();
+      // Load the PDF document from the ArrayBuffer
       const pdfDoc = await PDFDocument.load(arrayBuffer);
+      // Save the loaded PDF document back to bytes
       const pdfBytes = await pdfDoc.save();
+      // Create a Blob from the saved PDF bytes
       const editedPdfFile = new Blob([pdfBytes], { type: 'application/pdf' });
 
+      // Set the edited file state to the newly created Blob
       setEditedFile(editedPdfFile);
     }
   }
@@ -52,30 +57,40 @@ const PdfEditor = () => {
 
   function downloadEditedFile() {
     if (editedFile) {
+      // Create a URL for the edited file Blob
       const url = URL.createObjectURL(editedFile);
+      // Create a temporary anchor element
       const a = document.createElement('a');
 
+      // Set the href and download attributes of the anchor element
       a.href = url;
       a.download = 'edited.pdf';
+      // Append the anchor to the document body and click it to trigger the download
       document.body.appendChild(a);
       a.click();
+      // Remove the anchor from the document body and revoke the object URL
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     }
   }
 
+  // Function to extract the positions of text in the PDF
   async function extractTextAxis(pdfData: ArrayBuffer, findText: string) {
+    // Load the PDF document
     const loadingTask = pdfjs.getDocument({ data: pdfData });
     const pdf = await loadingTask.promise;
     const textPositions: PositionData[] = [];
 
+    // Iterate through each page in the PDF
     for (let pageIndex = 0; pageIndex < pdf.numPages; pageIndex++) {
       const page = await pdf.getPage(pageIndex + 1);
       const textContent = await page.getTextContent();
       const viewport = page.getViewport({ scale: 1 });
 
+      // Iterate through each text item on the page
       textContent.items.forEach((item: any) => {
         if (item.str.includes(findText)) {
+          // Calculate the position and transformation of the text item
           const transform = pdfjs.Util.transform(
             pdfjs.Util.transform(viewport.transform, item.transform),
             [1, 0, 0, -1, 0, 0],
@@ -88,6 +103,7 @@ const PdfEditor = () => {
           const fontSize = item.transform[0]; // Get current font size
           const color = item.color ? item.color : rgb(0, 0, 0); // Get available color
 
+          // Add the text position data to the array
           textPositions.push({ pageIndex, x, y, width, height, fontSize, color, str: item.str });
         }
       });
@@ -96,28 +112,33 @@ const PdfEditor = () => {
     return textPositions;
   }
 
+  // Function to find and replace text in the PDF
   async function findAndReplaceText() {
     if (editedFile && findText && replaceText) {
+      // Convert the edited file to an ArrayBuffer
       const arrayBuffer = await editedFile.arrayBuffer();
+      // Load the PDF document from the ArrayBuffer
       const pdfDoc = await PDFDocument.load(arrayBuffer);
+      // Extract text positions from the PDF
       const textPositions = await extractTextAxis(arrayBuffer, findText);
 
       const pages = pdfDoc.getPages();
 
+      // Iterate through each text position
       textPositions.forEach(({ pageIndex, x, y, width, height, color, fontSize, str }) => {
         const page = pages[pageIndex];
 
-        // Cover existing text with white bf
+        // Cover existing text with a white rectangle
         page.drawRectangle({
           x: x,
-          y: page.getHeight() - y, // 840 height of canvas
+          y: page.getHeight() - y, // Adjust y-coordinate for PDF coordinate system
           width,
           height: height,
           color: rgb(1, 1, 1),
           borderColor: rgb(1, 1, 1),
         });
 
-        // Rewrite existing ext with replaced word
+        // Rewrite existing text with the replaced word
         page.drawText(str.replace(findText, replaceText), {
           x: x,
           y: page.getHeight() - y,
@@ -126,9 +147,11 @@ const PdfEditor = () => {
         });
       });
 
+      // Save the modified PDF document
       const pdfBytes = await pdfDoc.save();
       const editedPdfFile = new Blob([pdfBytes], { type: 'application/pdf' });
 
+      // Set the edited file state to the newly created Blob
       setEditedFile(editedPdfFile);
     }
   }
