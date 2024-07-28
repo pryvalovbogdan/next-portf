@@ -1,30 +1,33 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { ChangeEvent, useRef, useState } from 'react';
 
 const PdfEditor = () => {
-  const [pdfFile, setPdfFile] = useState<any>(null);
-  const canvasRef = useRef(null);
-  const [text, setText] = useState('');
+  const [pdfFile, setPdfFile] = useState<ArrayBuffer | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [text, setText] = useState<string>('');
 
-  const handleFileUpload = event => {
-    const file = event.target.files[0];
-    const reader = new FileReader();
+  const handleFileUpload = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
 
-    reader.onload = e => {
-      const pdfArrayBuffer = e.target.result;
+    if (file) {
+      const reader = new FileReader();
 
-      const dec = new TextDecoder().decode(new Uint8Array(e.target.result));
+      reader.onload = e => {
+        const pdfArrayBuffer = e.target?.result as ArrayBuffer;
 
-      setPdfFile(pdfArrayBuffer);
-      setText(extractTextFromPDF(pdfArrayBuffer));
-    };
+        const dec = new TextDecoder().decode(new Uint8Array(pdfArrayBuffer));
 
-    reader.readAsArrayBuffer(file);
+        console.log('dec', dec);
+        setPdfFile(pdfArrayBuffer);
+        setText(extractTextFromPDF(pdfArrayBuffer));
+      };
+
+      reader.readAsArrayBuffer(file);
+    }
   };
 
-  async function binaryStringToByteArray(base64) {
-    const binaryString = atob(base64);
+  const binaryStringToByteArray = (binaryString: string) => {
     const len = binaryString.length;
     const bytes = new Uint8Array(len);
 
@@ -33,10 +36,9 @@ const PdfEditor = () => {
     }
 
     return bytes;
-  }
+  };
 
-  async function inflateByteArray(byteArray) {
-    // Create a blob from the byte array
+  async function inflateByteArray(byteArray: Uint8Array): Promise<string> {
     const blob = new Blob([byteArray]);
 
     // Create a stream from the blob
@@ -70,7 +72,8 @@ const PdfEditor = () => {
 
     if (streams) {
       streams.forEach(async stream => {
-        const byteArray = await binaryStringToByteArray(stream);
+        let str = pdfText.replace(/(stream)/g, '').replace(/(endstream)/g, '');
+        const byteArray = await binaryStringToByteArray(str);
         const decompressedText = await inflateByteArray(byteArray);
 
         console.log('decompressedText', decompressedText, byteArray);
@@ -96,7 +99,7 @@ const PdfEditor = () => {
     return pdfText;
   };
 
-  const extractTextFromPDF = pdfArrayBuffer => {
+  const extractTextFromPDF = (pdfArrayBuffer: ArrayBuffer): string => {
     let text = '';
 
     // Convert ArrayBuffer to Uint8Array
@@ -125,35 +128,42 @@ const PdfEditor = () => {
   const handleDownload = () => {
     const printWindow = window.open('', '', 'width=800,height=600');
 
-    printWindow.document.open();
+    if (printWindow) {
+      printWindow.document.open();
 
-    printWindow.document.write(`
-      <html>
-        <body>
-          <head>
-              <title>${text}</title>
-          </head>
-          <pre>${text}</pre>
-          <script>
-            window.onload = function() {
-              window.print(); // Open the print dialog
-              window.onafterprint = () => window.close(); // Close the window after printing
-            }
-          </script>
-        </body>
-      </html>
-    `);
+      printWindow.document.write(`
+        <html>
+          <body>
+            <head>
+                <title>${text}</title>
+            </head>
+            <pre>${text}</pre>
+            <script>
+              window.onload = function() {
+                window.print();
+                window.onafterprint = () => window.close();
+              }
+            </script>
+          </body>
+        </html>
+      `);
 
-    printWindow.document.close();
+      printWindow.document.close();
+    }
   };
 
   const handleAddText = () => {
     const canvas = canvasRef.current;
-    const context = canvas.getContext('2d');
 
-    context.font = '20px Arial';
-    context.fillStyle = 'blue';
-    context.fillText(text, 50, 150);
+    if (canvas) {
+      const context = canvas.getContext('2d');
+
+      if (context) {
+        context.font = '20px Arial';
+        context.fillStyle = 'blue';
+        context.fillText(text, 50, 150);
+      }
+    }
   };
 
   return (

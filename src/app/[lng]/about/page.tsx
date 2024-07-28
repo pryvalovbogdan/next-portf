@@ -1,10 +1,15 @@
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 
-import PdfEditor from 'src/app/[lng]/about/pdfEditor';
 import Button from 'src/app/[lng]/components/Button/Button';
 
 import { useTranslation } from '../../i18n';
 import { fallbackLng, languages } from '../../i18n/settings';
+import './style.css';
+
+const PagePDFViewer = dynamic(() => import('./pdfEditorPdfjs'), {
+  ssr: false,
+});
 
 export default async function Page({
   params: { lng },
@@ -19,12 +24,13 @@ export default async function Page({
 
   return (
     <div>
-      <PdfEditor />
+      {/*<PdfEditor />*/}
+      <PagePDFViewer />
       <Link href={`/${lng}`}>
         <Button colorBg='red'>{'main'}</Button>
       </Link>
       <Link href={`/${lng}/client-page`}>
-        <Button>{t('to-client-page')}</Button>
+        <Button>to-client-page</Button>
       </Link>
     </div>
   );
